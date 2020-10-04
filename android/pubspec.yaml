@@ -31,6 +31,7 @@ dependencies:
   get: ^3.12.1
   google_fonts: ^1.1.0
   lottie: ^0.6.0
+  flutter_bluetooth_serial: ^0.2.2
 
 dev_dependencies:
   flutter_test:

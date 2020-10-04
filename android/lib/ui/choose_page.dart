@@ -1,4 +1,5 @@
-import 'package:android/ui/widget/color_material.dart';
+import 'package:android/controller/bluetooth_ctl.dart';
+import 'package:android/service/bluetooth_service.dart';
 import 'package:android/ui/widget/custom_button.dart';
 import 'package:android/ui/widget/pixel.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,73 +21,89 @@ class _ChoosePageState extends State<ChoosePage> {
       child: Text(
         'Silahkan dipilih minumannya',
         textAlign: TextAlign.center,
-        style: GoogleFonts.poppins(fontSize: Pixel.x * 5, color: Colors.white),
+        style:
+            GoogleFonts.poppins(fontSize: Pixel.x * 5.5, color: Colors.white),
       ),
     );
   }
 
   Widget bottom() {
-    var icon = Container(
-      width: Pixel.x * 100,
-      child: Stack(
-        children: [
-          Positioned(
-              top: Pixel.y * 10,
-              left: Pixel.x * 35,
+    return GetBuilder<BluetoothCtl>(
+        init: BluetoothCtl(),
+        builder: (bluetooth) {
+          return Positioned(
+              bottom: 0,
+              width: Pixel.x * 100,
+              height: Pixel.y * 70,
               child: Container(
-                width: Pixel.x * 30,
-                decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                  BoxShadow(
-                      color: Colors.orangeAccent.withOpacity(0.3),
-                      blurRadius: 5,
-                      spreadRadius: 5)
-                ]),
-                child: Image.asset('assets/ic_fanta.png'),
-              )),
-          Positioned(
-              top: Pixel.y * 25,
-              left: Pixel.x * 15,
-              child: Container(
-                width: Pixel.x * 25,
-                decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                  BoxShadow(
-                      color: Colors.orangeAccent.withOpacity(0.3),
-                      blurRadius: 5,
-                      spreadRadius: 5)
-                ]),
-                child: Image.asset('assets/ic_cola.png'),
-              )),
-          Positioned(
-              top: Pixel.y * 25,
-              right: Pixel.x * 15,
-              child: InkWell(
-                onTap: () => print('sprite'),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(Pixel.x * 10),
+                        topRight: Radius.circular(Pixel.x * 10))),
                 child: Container(
-                  width: Pixel.x * 25,
-                  decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                    BoxShadow(
-                        color: Colors.green.withOpacity(0.3),
-                        blurRadius: 5,
-                        spreadRadius: 5)
-                  ]),
-                  child: Image.asset('assets/ic_sprite.png'),
+                  width: Pixel.x * 100,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                          top: Pixel.y * 10,
+                          left: Pixel.x * 35,
+                          child: InkWell(
+                            onTap: () => BluetoothService.send('a'),
+                            child: Container(
+                              width: Pixel.x * 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.orange.withOpacity(0.3),
+                                        blurRadius: 5,
+                                        spreadRadius: 5)
+                                  ]),
+                              child: Image.asset('assets/ic_fanta.png'),
+                            ),
+                          )),
+                      Positioned(
+                          top: Pixel.y * 25,
+                          left: Pixel.x * 15,
+                          child: InkWell(
+                            onTap: () => BluetoothService.send('b'),
+                            child: Container(
+                              width: Pixel.x * 25,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.red.withOpacity(0.3),
+                                        blurRadius: 5,
+                                        spreadRadius: 5)
+                                  ]),
+                              child: Image.asset('assets/ic_cola.png'),
+                            ),
+                          )),
+                      Positioned(
+                          top: Pixel.y * 25,
+                          right: Pixel.x * 15,
+                          child: InkWell(
+                            onTap: () => BluetoothService.send('c'),
+                            child: Container(
+                              width: Pixel.x * 25,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.green.withOpacity(0.3),
+                                        blurRadius: 5,
+                                        spreadRadius: 5)
+                                  ]),
+                              child: Image.asset('assets/ic_sprite.png'),
+                            ),
+                          ))
+                    ],
+                  ),
                 ),
-              ))
-        ],
-      ),
-    );
-    return Positioned(
-        bottom: 0,
-        width: Pixel.x * 100,
-        height: Pixel.y * 70,
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(Pixel.x * 10),
-                  topRight: Radius.circular(Pixel.x * 10))),
-          child: icon,
-        ));
+              ));
+        });
   }
 
   Widget button() {
@@ -97,13 +114,14 @@ class _ChoosePageState extends State<ChoosePage> {
         children: [
           CustomButton(
             hint: 'Disconnect',
-            bgcolor: Colors.orange,
+            bgcolor: Colors.blue,
             textcolor: Colors.white,
             width: Pixel.x * 35,
+            function: () => BluetoothService.disconnect(),
           ),
           CustomButton(
             hint: 'Home',
-            bgcolor: Colors.orange,
+            bgcolor: Colors.blue,
             textcolor: Colors.white,
             width: Pixel.x * 35,
             function: () => Get.back(),
@@ -113,14 +131,19 @@ class _ChoosePageState extends State<ChoosePage> {
     );
   }
 
+  void dispose() {
+    super.dispose();
+    BluetoothService.disconnect();
+  }
+
   @override
   Widget build(BuildContext context) {
     Pixel().init(context);
     return Container(
-      color: ColorMaterial.orange,
+      color: Colors.blue,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: ColorMaterial.orange,
+          backgroundColor: Colors.blue,
           body: Stack(
             children: [title(), bottom(), button()],
           ),
